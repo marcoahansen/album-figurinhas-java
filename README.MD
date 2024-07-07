@@ -1,4 +1,4 @@
-# Título do Projeto
+# Álbum de Figurinhas 
 
 Este é um projeto simples em Java que utiliza SQLite para armazenamento de dados e Swing para a interface gráfica do usuário.
 
