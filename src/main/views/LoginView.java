@@ -64,6 +64,8 @@ public class LoginView extends JFrame {
                     this.dispose();
                 } else if (usuario.getPerfil().equals("Autor")) {
                     JOptionPane.showMessageDialog(this, "Bem-vindo, Autor!");
+                    new FrmAutoria();
+                    this.dispose();
                 } else if (usuario.getPerfil().equals("Colecionador")) {
                     JOptionPane.showMessageDialog(this, "Bem-vindo, Colecionador!");
                 }
