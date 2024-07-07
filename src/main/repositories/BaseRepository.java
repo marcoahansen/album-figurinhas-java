@@ -1,10 +1,7 @@
 package main.repositories;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class BaseRepository {
     private static final String _DATA_BASE_ = "albumDeFigurinhas.db";
@@ -39,7 +36,16 @@ public class BaseRepository {
                 + " descricao TEXT,\n"
                 + " pagina INTEGER NOT NULL,\n"
                 + " tag TEXT,\n"
-                + " foto BLOB\n"
+                + " foto BLOB,\n"
+                + " album_id INTEGER,\n"  // Chave estrangeira para album
+                + " FOREIGN KEY(album_id) REFERENCES album(id)\n"
+                + ");";
+
+        String sqlAlbum = "CREATE TABLE IF NOT EXISTS album (\n"
+                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+                + " nome TEXT NOT NULL,\n"
+                + " capa BLOB,\n"
+                + " paginas INTEGER\n"
                 + ");";
 
         try (Connection conn = connect();
@@ -47,6 +53,7 @@ public class BaseRepository {
             if (conn != null) {
                 stmt.execute(sqlUsuarios);
                 stmt.execute(sqlFigurinhas);
+                stmt.execute(sqlAlbum);
                 System.out.println("Tables have been created.");
             }
         } catch (SQLException e) {

@@ -22,7 +22,8 @@ public class FigurinhaRepository {
                         rs.getString("descricao"),
                         rs.getInt("pagina"),
                         rs.getString("tag"),
-                        rs.getBytes("foto")
+                        rs.getBytes("foto"),
+                        rs.getInt("album_id")
                 );
                 figurinhas.add(figurinha);
             }
@@ -34,7 +35,7 @@ public class FigurinhaRepository {
     }
 
     public void addFigurinha(Figurinha figurinha) {
-        String sql = "INSERT INTO figurinhas(nome, numero, descricao, pagina, tag, foto) VALUES(?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO figurinhas(nome, numero, descricao, pagina, tag, foto, album_id) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = BaseRepository.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -44,6 +45,7 @@ public class FigurinhaRepository {
             pstmt.setInt(4, figurinha.getPagina());
             pstmt.setString(5, figurinha.getTag());
             pstmt.setBytes(6, figurinha.getFoto());
+            pstmt.setInt(7, figurinha.getAlbumId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -96,7 +98,8 @@ public class FigurinhaRepository {
                         rs.getString("descricao"),
                         rs.getInt("pagina"),
                         rs.getString("tag"),
-                        rs.getBytes("foto")
+                        rs.getBytes("foto"),
+                        rs.getInt("album_id")
                 );
             }
         } catch (SQLException e) {
@@ -104,5 +107,33 @@ public class FigurinhaRepository {
         }
 
         return figurinha;
+    }
+
+    public List<Figurinha> filtrarFigurinhas(String nome) {
+        String sql = "SELECT * FROM figurinhas WHERE nome LIKE ?";
+        List<Figurinha> figurinhas = new ArrayList<>();
+
+        try (Connection conn = BaseRepository.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, "%" + nome + "%");
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Figurinha figurinha = new Figurinha(
+                        rs.getInt("id"),
+                        rs.getString("nome"),
+                        rs.getInt("numero"),
+                        rs.getString("descricao"),
+                        rs.getInt("pagina"),
+                        rs.getString("tag"),
+                        rs.getBytes("foto"),
+                        rs.getInt("album_id")
+                );
+                figurinhas.add(figurinha);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return figurinhas;
     }
 }

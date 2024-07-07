@@ -60,6 +60,8 @@ public class LoginView extends JFrame {
             if (usuario.getNome().equals(nome) && usuario.getSenha().equals(senha)) {
                 if (usuario.getPerfil().equals("Administrador")) {
                     JOptionPane.showMessageDialog(this, "Bem-vindo, Administrador!");
+                    new AdminView();
+                    this.dispose();
                 } else if (usuario.getPerfil().equals("Autor")) {
                     JOptionPane.showMessageDialog(this, "Bem-vindo, Autor!");
                 } else if (usuario.getPerfil().equals("Colecionador")) {

@@ -11,15 +11,16 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class AdminView extends JFrame {
-    private JTextField nomeField, senhaField, perfilField;
-    private JButton btnAdicionar, btnExcluir, btnEditar, btnFiltrar;
+    private JTextField nomeField, senhaField, filtroField;
+    private JComboBox<String> perfilComboBox;
+    private JButton btnAdicionar, btnExcluir, btnEditar, btnFiltrar, btnLimpar;
     private JTable tabelaUsuarios;
     private DefaultTableModel tableModel;
     private UsuarioService usuarioService;
 
     public AdminView() {
         setTitle("Administração de Usuários");
-        setSize(600, 400);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         usuarioService = new UsuarioService();
@@ -27,63 +28,76 @@ public class AdminView extends JFrame {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(10, 10, 10, 10);
+        constraints.fill = GridBagConstraints.HORIZONTAL;
 
         nomeField = new JTextField(20);
+        nomeField.setPreferredSize(new Dimension(200, 40));
         senhaField = new JTextField(20);
-        perfilField = new JTextField(20);
+        senhaField.setPreferredSize(new Dimension(200, 40));
+        filtroField = new JTextField(20);
+        filtroField.setPreferredSize(new Dimension(200, 40));
 
-        Dimension textFieldSize = new Dimension(200, 30);
-        nomeField.setPreferredSize(textFieldSize);
-        nomeField.setMinimumSize(textFieldSize);
-        senhaField.setPreferredSize(textFieldSize);
-        senhaField.setMinimumSize(textFieldSize);
-        perfilField.setPreferredSize(textFieldSize);
-        perfilField.setMinimumSize(textFieldSize);
 
-        btnAdicionar = new JButton("Adicionar");
-        btnExcluir = new JButton("Excluir");
-        btnEditar = new JButton("Editar");
-        btnFiltrar = new JButton("Filtrar");
-
-        tableModel = new DefaultTableModel(new String[]{"ID", "Nome", "Senha", "Perfil"}, 0);
-        tabelaUsuarios = new JTable(tableModel);
-
-        refreshTable();
+        perfilComboBox = new JComboBox<>(new String[]{"Colecionador", "Autor", "Administrador"});
+        perfilComboBox.setPreferredSize(new Dimension(200, 30));
 
         constraints.gridx = 0;
         constraints.gridy = 0;
         panel.add(new JLabel("Nome:"), constraints);
         constraints.gridx = 1;
+        constraints.gridwidth = 3;
         panel.add(nomeField, constraints);
+        constraints.gridwidth = 1;
 
         constraints.gridx = 0;
         constraints.gridy = 1;
         panel.add(new JLabel("Senha:"), constraints);
         constraints.gridx = 1;
+        constraints.gridwidth = 3;
         panel.add(senhaField, constraints);
+        constraints.gridwidth = 1;
 
         constraints.gridx = 0;
         constraints.gridy = 2;
         panel.add(new JLabel("Perfil:"), constraints);
         constraints.gridx = 1;
-        panel.add(perfilField, constraints);
+        constraints.gridwidth = 3;
+        panel.add(perfilComboBox, constraints);
+        constraints.gridwidth = 1;
 
         constraints.gridx = 0;
         constraints.gridy = 3;
-        panel.add(btnAdicionar, constraints);
+        panel.add(btnAdicionar = new JButton("Adicionar"), constraints);
         constraints.gridx = 1;
-        panel.add(btnExcluir, constraints);
+        panel.add(btnExcluir = new JButton("Excluir"), constraints);
         constraints.gridx = 2;
-        panel.add(btnEditar, constraints);
-        constraints.gridx = 3;
-        panel.add(btnFiltrar, constraints);
+        panel.add(btnEditar = new JButton("Editar"), constraints);
+
+        constraints.gridy = 4;
+        constraints.gridx = 0;
+        constraints.gridwidth = 4;
+        panel.add(filtroField, constraints);
+        constraints.gridwidth = 1;
+        constraints.gridy = 5;
+        constraints.gridx = 1;
+        panel.add(btnFiltrar = new JButton("Filtrar"), constraints);
+        constraints.gridx = 2;
+        panel.add(btnLimpar = new JButton("Limpar"), constraints);
+
+
+        tableModel = new DefaultTableModel(new String[]{"ID", "Nome", "Senha", "Perfil"}, 0);
+        tabelaUsuarios = new JTable(tableModel);
 
         constraints.gridx = 0;
-        constraints.gridy = 4;
+        constraints.gridy = 6;
         constraints.gridwidth = 4;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.weightx = 1.0;
+        constraints.weighty = 1.0;
         panel.add(new JScrollPane(tabelaUsuarios), constraints);
 
-        // Configuração de listeners para botões
+        refreshTable();
+
         btnAdicionar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -112,6 +126,13 @@ public class AdminView extends JFrame {
             }
         });
 
+        btnLimpar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LimparFiltros();
+            }
+        });
+
         add(panel);
         setVisible(true);
     }
@@ -119,10 +140,10 @@ public class AdminView extends JFrame {
     private void adicionarUsuario() {
         String nome = nomeField.getText();
         String senha = senhaField.getText();
-        String perfil = perfilField.getText();
+        String perfil = (String) perfilComboBox.getSelectedItem();
 
-        if (!nome.isEmpty() && !senha.isEmpty() && !perfil.isEmpty()) {
-            Usuario novoUsuario = new Usuario(-1, nome, senha, perfil); // -1 ou qualquer valor, o ID será gerado pelo banco
+        if (!nome.isEmpty() && !senha.isEmpty() && perfil != null) {
+            Usuario novoUsuario = new Usuario(-1, nome, senha, perfil);
             usuarioService.addUsuario(novoUsuario);
             refreshTable();
             limparCampos();
@@ -149,9 +170,9 @@ public class AdminView extends JFrame {
             int id = (int) tabelaUsuarios.getValueAt(row, 0);
             String nome = nomeField.getText();
             String senha = senhaField.getText();
-            String perfil = perfilField.getText();
+            String perfil = (String) perfilComboBox.getSelectedItem();
 
-            if (!nome.isEmpty() && !senha.isEmpty() && !perfil.isEmpty()) {
+            if (!nome.isEmpty() && !senha.isEmpty() && perfil != null) {
                 Usuario usuario = usuarioService.getUsuarioById(id);
                 usuario.setNome(nome);
                 usuario.setSenha(senha);
@@ -168,8 +189,8 @@ public class AdminView extends JFrame {
     }
 
     private void filtrarUsuarios() {
-        String nome = nomeField.getText();
-        List<Usuario> usuariosFiltrados = usuarioService.filtrarUsuarios(nome);
+        String filtro = filtroField.getText();
+        List<Usuario> usuariosFiltrados = usuarioService.filtrarUsuarios(filtro);
         updateTable(usuariosFiltrados);
     }
 
@@ -179,7 +200,7 @@ public class AdminView extends JFrame {
     }
 
     private void updateTable(List<Usuario> usuarios) {
-        tableModel.setRowCount(0); // Limpa a tabela
+        tableModel.setRowCount(0);
         for (Usuario usuario : usuarios) {
             Object[] row = {usuario.getId(), usuario.getNome(), usuario.getSenha(), usuario.getPerfil()};
             tableModel.addRow(row);
@@ -189,7 +210,13 @@ public class AdminView extends JFrame {
     private void limparCampos() {
         nomeField.setText("");
         senhaField.setText("");
-        perfilField.setText("");
+        perfilComboBox.setSelectedIndex(0);
+        filtroField.setText("");
+    }
+
+    private void LimparFiltros() {
+        filtroField.setText("");
+        refreshTable();
     }
 
     public static void main(String[] args) {

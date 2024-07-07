@@ -31,4 +31,8 @@ public class FigurinhaService {
     public Figurinha getFigurinhaById(int id) {
         return figurinhaRepository.getFigurinhaById(id);
     }
+
+    public List<Figurinha> filtrarFigurinhas(String nome) {
+        return figurinhaRepository.filtrarFigurinhas(nome);
+    }
 }

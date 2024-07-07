@@ -8,8 +8,9 @@ public class Figurinha {
     private int pagina;
     private String tag;
     private byte[] foto;
+    private int album_id;
 
-    public Figurinha(int id, String nome, int numero, String descricao, int pagina, String tag, byte[] foto) {
+    public Figurinha(int id, String nome, int numero, String descricao, int pagina, String tag, byte[] foto, int album_id) {
         this.id = id;
         this.nome = nome;
         this.numero = numero;
@@ -17,6 +18,7 @@ public class Figurinha {
         this.pagina = pagina;
         this.tag = tag;
         this.foto = foto;
+        this.album_id = album_id;
     }
 
     public int getId() { return id; }
@@ -39,4 +41,7 @@ public class Figurinha {
 
     public byte[] getFoto() { return foto; }
     public void setFoto(byte[] foto) { this.foto = foto; }
+
+    public int getAlbumId() { return album_id; }
+    public void setAlbumId(int album_id) { this.album_id = album_id; }
 }
