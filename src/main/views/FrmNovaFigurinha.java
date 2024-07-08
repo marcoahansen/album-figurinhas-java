@@ -18,7 +18,7 @@ public class FrmNovaFigurinha extends JFrame {
         this.figurinhaService = new FigurinhaService();
 
         setTitle("Nova Figurinha");
-        setSize(400, 300);
+        setSize(600, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel panel = new JPanel(new GridBagLayout());
