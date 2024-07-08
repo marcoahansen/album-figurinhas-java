@@ -68,7 +68,6 @@ public class FrmAlbum extends JFrame {
 
             panelAlbum.add(panelFigurinha);
 
-            // Adicionar MouseListener para capturar o duplo clique
             panelFigurinha.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {

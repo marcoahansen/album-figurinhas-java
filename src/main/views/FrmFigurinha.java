@@ -16,8 +16,8 @@ public class FrmFigurinha extends JFrame {
     private JTextField nomeField, numeroField, paginaField, descricaoField, tagField;
     private JLabel imagemLabel;
     private JButton btnSalvar, btnSelecionarImagem;
-    private byte[] imagemBytes;  // Armazena a imagem como byte array
-    private ImageIcon imagemFigurinha;  // Armazena a imagem como ImageIcon para exibição
+    private byte[] imagemBytes;
+    private ImageIcon imagemFigurinha;
     private int albumId;
     private FigurinhaService figurinhaService;
     private Figurinha figurinhaParaEditar;
@@ -118,7 +118,6 @@ public class FrmFigurinha extends JFrame {
         paginaField.setText(String.valueOf(figurinha.getPagina()));
         descricaoField.setText(figurinha.getDescricao());
         tagField.setText(figurinha.getTag());
-        // Converter foto byte array para ImageIcon
         if (figurinha.getFoto() != null) {
             imagemFigurinha = new ImageIcon(figurinha.getFoto());
             imagemLabel.setIcon(imagemFigurinha);
@@ -129,26 +128,52 @@ public class FrmFigurinha extends JFrame {
     private void selecionarImagem() {
         JFileChooser fileChooser = new JFileChooser();
         int result = fileChooser.showOpenDialog(this);
+
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             try {
-                BufferedImage bufferedImage = ImageIO.read(file);
-                if (bufferedImage != null) {
-                    imagemFigurinha = new ImageIcon(bufferedImage);
-                    imagemLabel.setIcon(imagemFigurinha);
-
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    ImageIO.write(bufferedImage, "png", stream);
-                    stream.flush();
-                    imagemBytes = stream.toByteArray();
-                    stream.close();
-                } else {
-                    System.out.println("Imagem selecionada é nula ou inválida.");
+                if (!file.isFile() || !isImageFile(file)) {
+                    System.out.println("Selected file is not a valid image.");
+                    return;
                 }
+
+                BufferedImage bufferedImage = ImageIO.read(file);
+                if (bufferedImage == null) {
+                    System.out.println("Error reading image file.");
+                    return;
+                }
+
+                ImageIcon imagemFigurinha = new ImageIcon(bufferedImage);
+                imagemLabel.setIcon(imagemFigurinha);
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                ImageIO.write(bufferedImage, getFileExtension(file), stream); // Use appropriate extension
+                stream.flush();
+                byte[] imagemBytes = stream.toByteArray();
+                stream.close();
+
+                this.imagemBytes = imagemBytes;
+
             } catch (IOException ex) {
                 ex.printStackTrace();
+                System.out.println("Error processing image: " + ex.getMessage());
             }
         }
+    }
+
+    private boolean isImageFile(File file) {
+        String extension = getFileExtension(file);
+        return extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("png")
+                || extension.equalsIgnoreCase("gif") || extension.equalsIgnoreCase("bmp"); // Add more extensions as needed
+    }
+
+    private String getFileExtension(File file) {
+        String fileName = file.getName();
+        int dotPos = fileName.lastIndexOf('.');
+        if (dotPos > 0) {
+            return fileName.substring(dotPos + 1).toLowerCase();
+        }
+        return "";
     }
 
     private void salvarOuAtualizarFigurinha() {
@@ -169,12 +194,11 @@ public class FrmFigurinha extends JFrame {
             JOptionPane.showMessageDialog(this, "Figurinha salva com sucesso!");
         }
 
-        // Atualizar a tabela no FrmAutoria
         if (frmAutoria != null) {
             frmAutoria.refreshTable();
         }
 
-        dispose(); // Fechar a janela após salvar ou atualizar
+        dispose();
     }
 
     public static void main(String[] args) {
