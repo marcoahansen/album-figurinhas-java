@@ -136,4 +136,61 @@ public class FigurinhaRepository {
 
         return figurinhas;
     }
+
+    public List<Figurinha> getFigurinhasPorPagina(int pagina) {
+        List<Figurinha> figurinhas = new ArrayList<>();
+        String sql = "SELECT * FROM figurinhas WHERE pagina = ?";
+
+        try (Connection conn = BaseRepository.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, pagina);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Figurinha figurinha = new Figurinha(
+                        rs.getInt("id"),
+                        rs.getString("nome"),
+                        rs.getInt("numero"),
+                        rs.getString("descricao"),
+                        rs.getInt("pagina"),
+                        rs.getString("tag"),
+                        rs.getBytes("foto"),
+                        rs.getInt("album_id")
+                );
+                figurinhas.add(figurinha);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return figurinhas;
+    }
+
+    public Figurinha getFigurinhaPorTag(String tag) {
+        String sql = "SELECT * FROM figurinhas WHERE tag = ?";
+        Figurinha figurinha = null;
+
+        try (Connection conn = BaseRepository.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, tag);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                figurinha = new Figurinha(
+                        rs.getInt("id"),
+                        rs.getString("nome"),
+                        rs.getInt("numero"),
+                        rs.getString("descricao"),
+                        rs.getInt("pagina"),
+                        rs.getString("tag"),
+                        rs.getBytes("foto"),
+                        rs.getInt("album_id")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return figurinha;
+    }
+
+
 }

@@ -29,10 +29,9 @@ public class FrmAutoria extends JFrame {
         constraints.insets = new Insets(10, 10, 10, 10);
         constraints.fill = GridBagConstraints.HORIZONTAL;
 
-        // Dados do álbum
         JLabel nomeAlbumLabel = new JLabel("Nome do Álbum: ");
         JLabel paginasLabel = new JLabel("Páginas: 12");
-        JLabel capaLabel = new JLabel("Capa do Álbum: capa.png");
+        JLabel capaLabel = new JLabel("Capa do Álbum:");
 
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -49,9 +48,8 @@ public class FrmAutoria extends JFrame {
         constraints.gridy = 2;
         panel.add(capaLabel, constraints);
 
-        // Tabela de figurinhas
-        String[] colunas = {"ID", "Nome", "Página"};
-        Object[][] dados = {}; // Inicialmente vazio, será populado pelo banco de dados
+        String[] colunas = {"ID", "Nome", "Página", "Tag"};
+        Object[][] dados = {};
         tableModel = new DefaultTableModel(dados, colunas);
         tabelaFigurinhas = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tabelaFigurinhas);
@@ -64,12 +62,11 @@ public class FrmAutoria extends JFrame {
         constraints.weighty = 1.0;
         panel.add(scrollPane, constraints);
 
-        // Botões
         btnAdicionar = new JButton("Adicionar");
         btnAdicionar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new FrmFigurinha(albumId, FrmAutoria.this); // Passa a referência de FrmAutoria
+                new FrmFigurinha(albumId, FrmAutoria.this);
             }
         });
 
@@ -81,7 +78,7 @@ public class FrmAutoria extends JFrame {
                 if (selectedRow != -1) {
                     int figurinhaId = (int) tabelaFigurinhas.getValueAt(selectedRow, 0);
                     Figurinha figurinha = figurinhaService.getFigurinhaById(figurinhaId);
-                    new FrmFigurinha(albumId, figurinha, FrmAutoria.this); // Passa a referência de FrmAutoria
+                    new FrmFigurinha(albumId, figurinha, FrmAutoria.this);
                 } else {
                     JOptionPane.showMessageDialog(null, "Selecione uma figurinha para editar.");
                 }
@@ -96,7 +93,6 @@ public class FrmAutoria extends JFrame {
                 if (selectedRow != -1) {
                     int figurinhaId = (int) tabelaFigurinhas.getValueAt(selectedRow, 0);
                     figurinhaService.deleteFigurinha(figurinhaId);
-                    // Atualizar a tabela de figurinhas
                     refreshTable();
                 } else {
                     JOptionPane.showMessageDialog(null, "Selecione uma figurinha para excluir.");
@@ -129,12 +125,10 @@ public class FrmAutoria extends JFrame {
     }
 
     private void atualizarModeloTabela(List<Figurinha> figurinhas) {
-        // Limpa os dados atuais da tabela
         tableModel.setRowCount(0);
 
-        // Adiciona os novos dados
         for (Figurinha figurinha : figurinhas) {
-            Object[] rowData = {figurinha.getId(), figurinha.getNome(), figurinha.getPagina()};
+            Object[] rowData = {figurinha.getId(), figurinha.getNome(), figurinha.getPagina(), figurinha.getTag()};
             tableModel.addRow(rowData);
         }
     }

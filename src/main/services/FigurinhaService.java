@@ -35,4 +35,12 @@ public class FigurinhaService {
     public List<Figurinha> filtrarFigurinhas(String nome) {
         return figurinhaRepository.filtrarFigurinhas(nome);
     }
+
+    public List<Figurinha>  getFigurinhasPorPagina(int pagina) {
+        return figurinhaRepository.getFigurinhasPorPagina(pagina);
+    }
+
+    public Figurinha  getFigurinhaPorTag(String tag) {
+        return figurinhaRepository.getFigurinhaPorTag(tag);
+    }
 }
